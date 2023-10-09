@@ -21,20 +21,20 @@ class coordinator_aipu_processor(aipu):
         biases,
         fas,
         capa_id,
-        output_name,
+        output_names,
         output_ip,
         output_port,
-        input_name
+        input_names
     ):
         super().__init__(aipu_id)
         self.pesos = pesos
         self.biases = biases
         self.fas = fas
         self.capa_id = capa_id
-        self.output_name = output_name
+        self.output_names = output_names
         self.output_ip = output_ip
         self.output_port = output_port
-        self.input_name = input_name
+        self.input_names = input_names
         self.inputs = []
 
         #self.instrucciones = self.get_format_instr(instrucciones) 
@@ -44,10 +44,12 @@ class coordinator_aipu_processor(aipu):
         print("Running the neurons, muchachon!")
         try:
             result = NPUClusterOps.run(
+                inputs = self.inputs,
                 pesos = self.pesos,
-                biases = self.bias,
+                biases = self.biases,
                 fas = self.fas,
-                output_name = self.output_name,
+                input_names = self.input_names,
+                output_names = self.output_names,
                 output_ip = self.output_ip,
                 output_port = self.output_port
             )
@@ -58,17 +60,19 @@ class coordinator_aipu_processor(aipu):
 
         return result
 
-    def verify_input(self, entrante_input_name):
-        if self.input_name == entrante_input_name:
+    def verify_input(self, entrante_input_names):
+        if self.input_names == entrante_input_names:
             return True
         else:
             return False
 
-    def set_inputs(self, inputs, entrante_input_name):
-        if self.verify_input(entrante_input_name):
+    def set_inputs(self, inputs, entrante_input_names):
+        if self.verify_input(entrante_input_names):
             print("Inputs accepted")
             self.inputs = inputs
+            return True
         else:
             print("Inputs rejected")
+            return False 
 
 
