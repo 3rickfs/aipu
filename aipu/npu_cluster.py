@@ -80,6 +80,21 @@ class success_msg(neuron_ops):
 
         return kwargs
 
+class create_output_msgs(neuron_ops):
+    """ Crear mensajes de salida para los destinos correspondientes
+    """
+
+    def run_operation(**kwargs):
+        print("Crear mensajes de salida")
+        output_msg = {
+            'input_names': [kwargs["output_names"] for i in range(len(kwargs["input_names"]))],
+            'inputs': {kwargs["output_names"]: kwargs["o"]}
+        }
+        kwargs["output_msg"] = output_msg
+        print(output_msg)
+
+        return kwargs
+
 
 class NPUClusterOps:
 
