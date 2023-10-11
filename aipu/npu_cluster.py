@@ -22,10 +22,10 @@ class mul_vectors(neuron_ops):
         for i in range(len(kwargs["pesos"])):
             #print(kwargs["inputs"]["i1"][i])
             inpts = list(kwargs["inputs"][kwargs["input_names"][i]])
-            print(inpts)
+            #print(inpts)
             mu = [x*w for w, x in zip(kwargs["pesos"][i], inpts)]
             m.append(mu)
-        print(m)
+        #print(m)
         kwargs["m"] = m
 
         return kwargs

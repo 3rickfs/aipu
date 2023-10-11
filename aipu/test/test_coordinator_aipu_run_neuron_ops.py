@@ -16,11 +16,12 @@ class neuron_ops_test_cases(unittest.TestCase):
             output_names = "o1",
             output_ip = "192.168.0.1",
             output_port = "6339",
-            input_names = ["i1"]
+            input_names = ["i1"],
+            input_num = 2
         )
 
         inpts = {"i1":[2,3]}
-        if test_aipu.set_inputs(inpts, ["i1"]):
+        if test_aipu.set_inputs(inpts, ["i1"], [0, 1]):
             try: 
                 result = test_aipu.run_neuron_ops()
                 self.assertEqual(expected_result, result["result"])
@@ -30,7 +31,7 @@ class neuron_ops_test_cases(unittest.TestCase):
                 print("-"*100)
 
         else:
-            print("Error running neuron_ops,input rejected")
+            print("Error running neuron_ops, input rejected")
         print("*"*100)
 
     def test_run_neuron_math_ops(self):
@@ -48,11 +49,12 @@ class neuron_ops_test_cases(unittest.TestCase):
             output_names = "o1",
             output_ip = "192.168.0.1",
             output_port = "6339",
-            input_names = ["i1", "i1"]
+            input_names = ["i1", "i1"],
+            input_num = 3
         )
 
         inpts = {"i1":[2,3,3]}
-        if test_aipu.set_inputs(inpts, ["i1", "i1"]):
+        if test_aipu.set_inputs(inpts, ["i1", "i1"], [0, 1, 2]):
             try:
                 result = test_aipu.run_neuron_ops()
                 self.assertEqual(expected_result, result["o"])
@@ -81,11 +83,12 @@ class neuron_ops_test_cases(unittest.TestCase):
             output_names = "o10-13",
             output_ip = "192.168.0.1",
             output_port = "6339",
-            input_names = ["i1", "i1", "i1", "i1"]
+            input_names = ["i1", "i1", "i1", "i1"],
+            input_num = 3
         )
 
         inpts = {"i1":[2,3,3]}
-        if test_aipu.set_inputs(inpts, ["i1", "i1", "i1", "i1"]):
+        if test_aipu.set_inputs(inpts, ["i1", "i1", "i1", "i1"], [0, 1, 2]):
             try:
                 result = test_aipu.run_neuron_ops()
                 self.assertEqual(expected_result, result["o"])
@@ -114,7 +117,8 @@ class neuron_ops_test_cases(unittest.TestCase):
             output_names = "o10-13",
             output_ip = "192.168.0.1",
             output_port = "6339",
-            input_names = ["i1", "i1", "i1", "i1"]
+            input_names = ["i1", "i1", "i1", "i1"],
+            input_num = 3
         )
 
         #inpts = {"i1":[2,3,3]}
@@ -123,7 +127,62 @@ class neuron_ops_test_cases(unittest.TestCase):
                      "inputs": {"i1":[2, 3, 3]}
                     }
 
-        if test_aipu.set_inputs(input_msg["inputs"], input_msg["input_names"]):
+        if test_aipu.set_inputs(input_msg["inputs"],
+                                input_msg["input_names"],
+                                [0, 1, 2]):
+            try:
+                result = test_aipu.run_neuron_ops()
+                self.assertEqual(expected_result, result["output_msg"])
+            except Exception as e:
+                print("-"*100)
+                print(f"error: {e}")
+                print("-"*100)
+
+        else:
+            print("Error running neuron_ops,input rejected")
+        print("*"*100)
+
+
+    def test_input_homogeneo_asincrono(self):
+        print("*"*100)
+        print("Test 5: testear inputs homogeneos y asincronos")
+        expected_result = {'input_names': ['o10-13', 'o10-13', 'o10-13', 'o10-13'],
+                           'inputs': {'o10-13': [20, 21, 22, 23]}}
+
+        test_aipu = coordinator_aipu_processor(
+            aipu_id = "1",
+            pesos = [[1,2,3], [1,2,3], [1,2,3], [1,2,3]],
+            biases = [3, 4, 5, 6],
+            fas = ["ReLu", "ReLu", "ReLu", "ReLu"],
+            capa_id = "1",
+            output_names = "o10-13",
+            output_ip = "192.168.0.1",
+            output_port = "6339",
+            input_names = ["i1", "i1", "i1", "i1"],
+            input_num = 3
+        )
+
+        #inpts = {"i1":[2,3,3]}
+        input_msg_1 = { # or output_msg from previous layer
+                        "input_names": ["i1", "i1", "i1", "i1"],
+                        "inputs": {"i1":[2, 3]},
+                        "input_idx": [0, 1]
+                      }
+        input_msg_2 = { # or output_msg from previous layer
+                        "input_names": ["i1", "i1", "i1", "i1"],
+                        "inputs": {"i1":[3]},
+                        "input_idx": [2]
+                      }
+
+        #Primer entrada de input
+        if test_aipu.set_inputs(input_msg_1["inputs"],
+                                input_msg_1["input_names"],
+                                input_msg_1["input_idx"]
+                               ) and \
+           test_aipu.set_inputs(input_msg_2["inputs"],
+                                input_msg_2["input_names"],
+                                input_msg_2["input_idx"]
+                               ):
             try:
                 result = test_aipu.run_neuron_ops()
                 self.assertEqual(expected_result, result["output_msg"])

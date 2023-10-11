@@ -24,7 +24,8 @@ class coordinator_aipu_processor(aipu):
         output_names,
         output_ip,
         output_port,
-        input_names
+        input_names,
+        input_num
     ):
         super().__init__(aipu_id)
         self.pesos = pesos
@@ -35,7 +36,11 @@ class coordinator_aipu_processor(aipu):
         self.output_ip = output_ip
         self.output_port = output_port
         self.input_names = input_names
-        self.inputs = []
+        self.neuron_num = len(input_names)
+        self.input_num = input_num
+        self.inputs = {input_names[0]: [0 for i in range(self.input_num)]}
+        self.input_num_count = 0
+        self.status = "waiting"
 
         #self.instrucciones = self.get_format_instr(instrucciones) 
         #self.procesadores = self.get_format_proc(procesadores)
@@ -53,6 +58,8 @@ class coordinator_aipu_processor(aipu):
                 output_ip = self.output_ip,
                 output_port = self.output_port
             )
+            self.status = "waiting" #for next job
+            self.input_num_count = 0
         except Exception as e:
             result = {
                 'error': e
@@ -60,16 +67,27 @@ class coordinator_aipu_processor(aipu):
 
         return result
 
-    def verify_input(self, entrante_input_names):
+    def verify_input(self, entrante_input_names, input_idx):
+        #res = True
+        #for j, idx in enumerate(input_idx):
+        #    res = res and (self.input_names[idx] == entrante_input_names[j])
+
+        #if res: 
         if self.input_names == entrante_input_names:
             return True
         else:
             return False
 
-    def set_inputs(self, inputs, entrante_input_names):
-        if self.verify_input(entrante_input_names):
+    def set_inputs(self, inputs, entrante_input_names, input_idx):
+        if self.verify_input(entrante_input_names, input_idx):
             print("Inputs accepted")
-            self.inputs = inputs
+            inpts = self.inputs[entrante_input_names[0]]
+            for j, idx in enumerate(input_idx):
+                inpts[idx] = inputs[entrante_input_names[0]][j]
+                self.input_num_count += 1
+            self.inputs[entrante_input_names[0]] = inpts
+            if self.input_num == self.input_num_count:
+                self.status = "ready"
             return True
         else:
             print("Inputs rejected")
