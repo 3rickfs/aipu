@@ -5,7 +5,10 @@ import socket
 import selectors
 import types
 
+#from aipu.aipu import aipu
+
 sel = selectors.DefaultSelector()
+estado = False
 
 
 def accept_wrapper(sock):
@@ -17,7 +20,7 @@ def accept_wrapper(sock):
     sel.register(conn, events, data=data)
 
 
-def service_connection(key, mask):
+def service_connection(key, mask, estado):
     sock = key.fileobj
     data = key.data
     if mask & selectors.EVENT_READ:
@@ -30,6 +33,14 @@ def service_connection(key, mask):
             sock.close()
     if mask & selectors.EVENT_WRITE:
         if data.outb:
+            print("Data recieved from the aipu messenger")
+            print(data.outb.decode('ascii'))
+            if str(data.outb.decode('ascii')) == "c":
+                estado = True
+            if estado:
+                print("TEST EXITOSO - Estado actualizado")
+            else:
+                print("TEST FALLO - Estado no actualizado")
             print(f"Echoing {data.outb!r} to {data.addr}")
             sent = sock.send(data.outb)  # Should be ready to write
             data.outb = data.outb[sent:]
@@ -54,7 +65,7 @@ try:
             if key.data is None:
                 accept_wrapper(key.fileobj)
             else:
-                service_connection(key, mask)
+                service_connection(key, mask, estado)
 except KeyboardInterrupt:
     print("Caught keyboard interrupt, exiting")
 finally:

@@ -2,15 +2,6 @@
 from . npu_cluster import NPUClusterOps
 
 class aipu():
-    """ Define el contructor de un AIPU
-    """
-
-    def __init__(self, aipu_id):
-        self.aipu_id = aipu_id
-        self.version = "1.0.0"
-        self.status = ""
-
-class coordinator_aipu_processor(aipu):
     """ Define el aipu procesador coordinador incluyendo sus atributos y metodos
     """
 
@@ -27,7 +18,8 @@ class coordinator_aipu_processor(aipu):
         input_names,
         input_num
     ):
-        super().__init__(aipu_id)
+        self.version = "1.0.0"
+        self.aipu_id = aipu_id
         self.pesos = pesos
         self.biases = biases
         self.fas = fas

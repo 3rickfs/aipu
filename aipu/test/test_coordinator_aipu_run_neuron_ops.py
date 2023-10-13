@@ -1,5 +1,5 @@
 import unittest
-from aipu.aipu import coordinator_aipu_processor
+from aipu.aipu import aipu 
 
 class neuron_ops_test_cases(unittest.TestCase):
 
@@ -7,7 +7,7 @@ class neuron_ops_test_cases(unittest.TestCase):
         print("*"*100)
         print("Test 1: Chequear que neuron_ops puede correr sin problemas")
         expected_result = "Successful"
-        test_aipu = coordinator_aipu_processor(
+        test_aipu = aipu(
             aipu_id = "1",
             pesos = [[1,2]],
             biases = [2],
@@ -40,7 +40,7 @@ class neuron_ops_test_cases(unittest.TestCase):
               "sumatoria, aplicacion del bias y funcion de activacion corren")
         expected_result = [20, 20]
 
-        test_aipu = coordinator_aipu_processor(
+        test_aipu = aipu(
             aipu_id = "1",
             pesos = [[1,2,3], [1,2,3]],
             biases = [3, 3],
@@ -74,7 +74,7 @@ class neuron_ops_test_cases(unittest.TestCase):
               "usando otros valores")
         expected_result = [20,21,22,23]
 
-        test_aipu = coordinator_aipu_processor(
+        test_aipu = aipu(
             aipu_id = "1",
             pesos = [[1,2,3], [1,2,3], [1,2,3], [1,2,3]],
             biases = [3, 4, 5, 6],
@@ -108,7 +108,7 @@ class neuron_ops_test_cases(unittest.TestCase):
         expected_result = {'input_names': ['o10-13', 'o10-13', 'o10-13', 'o10-13'],
                            'inputs': {'o10-13': [20, 21, 22, 23]}}
 
-        test_aipu = coordinator_aipu_processor(
+        test_aipu = aipu(
             aipu_id = "1",
             pesos = [[1,2,3], [1,2,3], [1,2,3], [1,2,3]],
             biases = [3, 4, 5, 6],
@@ -149,7 +149,7 @@ class neuron_ops_test_cases(unittest.TestCase):
         expected_result = {'input_names': ['o10-13', 'o10-13', 'o10-13', 'o10-13'],
                            'inputs': {'o10-13': [20, 21, 22, 23]}}
 
-        test_aipu = coordinator_aipu_processor(
+        test_aipu = aipu(
             aipu_id = "1",
             pesos = [[1,2,3], [1,2,3], [1,2,3], [1,2,3]],
             biases = [3, 4, 5, 6],

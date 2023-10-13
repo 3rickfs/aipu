@@ -6,7 +6,7 @@ import selectors
 import types
 
 sel = selectors.DefaultSelector()
-messages = [b"Message 1 from client.", b"Message 2 from client."]
+messages = [b"c"]
 
 
 def start_connections(host, port, num_conns):
@@ -35,6 +35,7 @@ def service_connection(key, mask):
         recv_data = sock.recv(1024)  # Should be ready to read
         if recv_data:
             print(f"Received {recv_data!r} from connection {data.connid}")
+            print(f"Estado de aipu procesador fue actualizado con exito")
             data.recv_total += len(recv_data)
         if not recv_data or data.recv_total == data.msg_total:
             print(f"Closing connection {data.connid}")
