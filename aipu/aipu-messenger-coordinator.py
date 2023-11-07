@@ -15,6 +15,7 @@ def start_connections(host, port, num_conns):
         connid = i + 1
         print(f"Starting connection {connid} to {server_addr}")
         sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+        sock.bind(('127.0.0.1', 61356))
         sock.setblocking(False)
         sock.connect_ex(server_addr)
         events = selectors.EVENT_READ | selectors.EVENT_WRITE
